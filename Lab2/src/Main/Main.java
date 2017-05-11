@@ -1,62 +1,50 @@
 package Main;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Main {
-
-    //TODO: доделать поиск по поддиректориям
-    //TODO: доделать слачаи с остав. аргументами
-    static public boolean SearchInfolder(String dir, String filename) {
-        return false;
+    static public SearchResult SearchInFolder(String dir, String filename, boolean searchInSubFolders) {
+        File folder = new File(dir);
+        if (folder.isDirectory() && folder != null && folder.listFiles() != null) {
+            for (int i = 0; i < folder.listFiles().length; i++) {
+                if (folder.listFiles()[i].isDirectory() && SearchInFolder(folder.listFiles()[i].getPath(), filename, searchInSubFolders).found)
+                    return new SearchResult(folder.listFiles()[i].getPath(), true);
+                if (folder.listFiles()[i].isFile() && folder.listFiles()[i].getName().equals(filename))
+                    return new SearchResult(folder.getPath(), true);
+            }
+        }
+        return new SearchResult();
     }
 
-    static public boolean Find(String[] args) {
-        boolean found = false;
+    static public SearchResult Find(String[] args) {
+        SearchResult found = new SearchResult();
         System.out.println("Lab 2 started!");
         if (args.length == 4) {
             if (args[0] == "-r" && args[1] == "-d") {
                 String dir = args[2], filename = args[3];
-                File folder = new File(dir);
-                if (folder != null && folder.listFiles() != null) {
-                    for (int i = 0; i < folder.listFiles().length; i++) {
-                        System.out.println(folder.listFiles()[i]);
-                    }
-                }
+                File file = new File(dir);
+                return SearchInFolder(file.getPath(), filename, true);
+
             }
-
-
         } else if (args.length == 3) {
             if (args[0] == "-d") {
-                String dir = args[1], filename = args[2];
-                File folder = new File(dir);
-                if (folder != null && folder.listFiles() != null) {
-                    for (int i = 0; i < folder.listFiles().length; i++) {
-                        if (folder.listFiles()[i].getName().equals(filename)) {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                }
+                return SearchInFolder(args[1], args[2], false);
             }
-
         } else if (args.length == 1) {
-
+            Path currentRelativePath = Paths.get("");
+            String dir = currentRelativePath.toAbsolutePath().toString();
+            return SearchInFolder(dir, args[0], false);
         } else {
             System.out.println("Неверное указаны параметры!");
         }
-
         return found;
     }
 
-    //Вызов cmd
-    //C:\Users\Александр\IdeaProjects\Lab2\out\artifacts\Lab2_jar>java -jar Lab2.jar
+    //Вызов cmd C:\Users\Александр\IdeaProjects\Lab2\out\artifacts\Lab2_jar>java -jar Lab2.jar
     public static void main(String[] args) {
-
-        if (Find(new String[]{"-r", "-d", "C:\\Users\\Александр\\Desktop", "target.txt"})) {
-            System.out.print("Файл найден");
-        } else
-            System.out.print("Файл  не найден");
-        //Find(args);
+        //System.out.print(Find(new String[]{"-r", "-d", "C:\\Users\\Александр\\Desktop", "target.txt"}).Print());
+        System.out.print(Find(new String[]{"target.txt"}).Print());
     }
 }
