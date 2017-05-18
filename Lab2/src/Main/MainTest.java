@@ -44,23 +44,22 @@ public class MainTest {
     }
 
     public void deleteDir(String dir) throws Exception {
-//        File file = new File(dir);
-//        if (file.exists()) {
-//            if (file.delete()) {
-//                System.out.println("Directory is deleted!");
-//            } else {
-//                System.out.println("Failed to delete directory!");
-//            }
-//        }
         try {
             File file = new File(dir);
             Path fp = file.toPath();
+            String[] entries = file.list();
+            for (String s : entries) {
+                File currentFile = new File(file.getPath(), s);
+                currentFile.delete();
+            }
             Files.delete(fp);
+            System.out.println("Directory is removed!");
         } catch (NoSuchFileException x) {
             System.err.format("%s: no such" + " file or directory%n", dir);
         } catch (DirectoryNotEmptyException x) {
             System.err.format("%s not empty%n", dir);
-        } catch (IOException x) {// File permission problems are caught here.
+        } catch (IOException x) {
+            // File permission problems are caught here.
             System.err.println(x);
         }
     }
@@ -95,24 +94,33 @@ public class MainTest {
     @org.junit.After
     public void exit() throws Exception {
         for (int i = 0; i < dirs.length; i++) {
-            deleteDir(dirs[i]);
+            File file = new File(dirs[i]);
+            if (file.exists())
+                deleteDir(dirs[i]);
         }
+        File file = new File(dir + filename);
+        if (file.exists())
+            deleteFile(dir, filename);
     }
-//TODO:доделать удаление папок с файлами, дописать тесты
+
     @org.junit.Test
     public void searchInFolder() throws Exception {
         for (int i = 0; i < dirs.length; i++) {
             createDir(dirs[i]);
             createFile(dirs[i], filename);
             org.junit.Assert.assertEquals(Main.SearchInFolder(dirs[i], filename, false).found, true);
-            //deleteFile(dirs[i],filename);
-            //deleteDir(dirs[i]);
         }
     }
 
     @org.junit.Test
     public void find() throws Exception {
-
+        org.junit.Assert.assertEquals(Main.Find(new String[]{"target.txt"}).Print(), "Файл не найден");
+        createFile(dir, filename);
+        org.junit.Assert.assertEquals(Main.Find(new String[]{"-d", "C:\\Users\\Александр\\Desktop", "target.txt"}).Print(), "Файл найден: C:\\Users\\Александр\\Desktop");
+        deleteFile(dir,filename);
+        createDir(dirs[0]);
+        createFile(dirs[0], filename);
+        org.junit.Assert.assertEquals(Main.Find(new String[]{"-r", "-d", "C:\\Users\\Александр\\Desktop", "target.txt"}).Print(), "Файл найден: C:\\Users\\Александр\\Desktop\\N1");
     }
 
 }

@@ -42,9 +42,12 @@ public class Main {
         return found;
     }
 
-    //Вызов cmd C:\Users\Александр\IdeaProjects\Lab2\out\artifacts\Lab2_jar>java -jar Lab2.jar
+    //Вызов cmd
+    // C:\Users\Александр\IdeaProjects\Lab2\out\artifacts\Lab2_jar>java -jar Lab2.jar
+    // C:\Users\Александр\IdeaProjects\Labs\out\artifacts\Lab2_jar>java -jar Lab2.jar "target.txt"
     public static void main(String[] args) {
         //System.out.print(Find(new String[]{"-r", "-d", "C:\\Users\\Александр\\Desktop", "target.txt"}).Print());
-        System.out.print(Find(new String[]{"target.txt"}).Print());
+        //System.out.print(Find(new String[]{"target.txt"}).Print());
+        System.out.print(Find(args).Print());
     }
 }
