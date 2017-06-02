@@ -10,8 +10,6 @@ import java.awt.event.MouseEvent;
 /**
  * Created by Александр on 25.05.2017.
  */
-//TODO:доделать проверку, по диагоналями тестить проверку по строкам и столбцам
-//TODO:вставить ИИ для ноликов
 public class Game extends JFrame {
     int field[][] = new int[5][5];
     boolean crosses = true;
